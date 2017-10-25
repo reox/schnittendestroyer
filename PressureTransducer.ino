@@ -18,6 +18,51 @@ byte smiley[8] = {
   B00000,
 };
 
+int readSensorMbar(){
+  // Honeywell 40PC250G pressure sensor
+  // resolution of analog pin ~4.9mV
+  // sensor gives 16mV/psi...
+  
+  // Analog input
+  // 5V ... 1023
+  // 0V ... 0
+  
+  // Sensor signal
+  // 4V   ... 250 psi = 819 analog value
+  // 0.5V ... 0   psi = 102 analog value
+  
+  // and with 1 mbar = psi * 68.9476:
+  // (sensorValue - 102) / (819 - 102) * 250 * 68.9476 = mbar
+  // = (sensorValue - 102) * 24.0403 ~= 24 * (sensorValue - 102)
+  
+  long res = 0L;
+  
+  for(int i = 0; i < 128; i++){
+    res += analogRead(A0);
+  }
+  
+  // divide by 128
+  res = res >> 7;
+  
+  return (24 * (res - 102)) - compensation;
+}
+  
+  
+
+int getCompensation(){
+  // basically the same as readSensorMbar, but a lot more times...
+  
+  long res = 0L;
+  for (int i = 0; i < 256; i++){
+    res += readSensorMbar();
+  }
+  res = res >> 8;
+  
+  return res & 0xFFFF;
+}
+
+
+
 void setup() {
     lcd.begin(20, 4);
   
@@ -75,46 +120,3 @@ void loop() {
 }
 
 
-int getCompensation(){
-  // basically the same as readSensorMbar, but a lot more times...
-  
-  long res = 0L;
-  for (int i = 0; i < 256; i++){
-    res += readSensorMbar();
-  }
-  res = res >> 8;
-  
-  return res & 0xFFFF;
-}
-
-
-int readSensorMbar(){
-  // Honeywell 40PC250G pressure sensor
-  // resolution of analog pin ~4.9mV
-  // sensor gives 16mV/psi...
-  
-  // Analog input
-  // 5V ... 1023
-  // 0V ... 0
-  
-  // Sensor signal
-  // 4V   ... 250 psi = 819 analog value
-  // 0.5V ... 0   psi = 102 analog value
-  
-  // and with 1 mbar = psi * 68.9476:
-  // (sensorValue - 102) / (819 - 102) * 250 * 68.9476 = mbar
-  // = (sensorValue - 102) * 24.0403 ~= 24 * (sensorValue - 102)
-  
-  long res = 0L;
-  
-  for(int i = 0; i < 128; i++){
-    res += analogRead(A0);
-  }
-  
-  // divide by 128
-  res = res >> 7;
-  
-  return (24 * (res - 102)) - compensation;
-}
-  
-  
