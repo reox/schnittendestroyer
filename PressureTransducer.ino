@@ -8,7 +8,6 @@ int sensmin = 9999;
 int sensmax = -1;
 int compensation = 0;
 
-
 byte smiley[8] = {
   B00000,
   B10001,
@@ -19,8 +18,6 @@ byte smiley[8] = {
   B00000,
 };
 
-
-// the setup routine runs once when you press reset:
 void setup() {
     lcd.begin(20, 4);
   
@@ -34,8 +31,8 @@ void setup() {
   lcd.print(String("compensation: ") + String(compensation));
   
   
-    lcd.createChar(0, smiley);
-    lcd.setCursor(0,2);
+  lcd.createChar(0, smiley);
+  lcd.setCursor(0,2);
   lcd.write(byte(0));
   
   delay(2000);
@@ -44,11 +41,8 @@ void setup() {
   
 }
 
-
-
-
-// the loop routine runs over and over again forever:
 void loop() {
+  // It takes about 100 microseconds (0.0001 s) to read an analog input, so the maximum reading rate is about 10,000 times a second. 
   int sens = readSensorMbar();
   
   if (sens > sensmax) {
@@ -58,7 +52,7 @@ void loop() {
     sensmin = sens;
   }
   
-  Serial.println(readSensorMbar());  
+  Serial.println(readSensorMbar());
   
   lcd.setCursor(0,0);
   lcd.print(String("cur: ") + String(sens) + String("     "));
@@ -77,11 +71,6 @@ void loop() {
   
   lcd.setCursor(0, 3);
   lcd.print(millis());
-  
-  // It takes about 100 microseconds (0.0001 s) to read an analog input, so the maximum reading rate is about 10,000 times a second. 
-  
-  // print out the value you read:
-  //Serial.println(sensorValue);
   delay(1);        // delay in between reads for stability
 }
 
@@ -122,7 +111,7 @@ int readSensorMbar(){
     res += analogRead(A0);
   }
   
-  // divide by 32
+  // divide by 128
   res = res >> 7;
   
   return (24 * (res - 102)) - compensation;
