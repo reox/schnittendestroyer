@@ -8,6 +8,9 @@ int sensmin = 9999;
 int sensmax = -1;
 int compensation = 0;
 
+// this constant is pi * (12.5 / 2)^2 * 1/10000
+const double c_force = 0.0122718463;
+
 byte smiley[8] = {
   B00000,
   B10001,
@@ -116,18 +119,16 @@ void loop() {
   */
   
   // calculate the force
-  // this constant is pi * (12.5 / 2)^2 * 1/10000
-  double x = 0.0122718463;
   lcd.setCursor(0, 2);
   lcd.print("F cur: ");
-  lcd.print(sens * x);
+  lcd.print(sens * c_force);
   lcd.print("      ");
   lcd.setCursor(19, 2);
   lcd.print("N");
 
   lcd.setCursor(0, 3);
   lcd.print("F max: ");
-  lcd.print(sensmax * x);
+  lcd.print(sensmax * c_force);
   lcd.print("      ");
   lcd.setCursor(19, 3);
   lcd.print("N");
