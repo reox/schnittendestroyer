@@ -68,16 +68,15 @@ void setup() {
   
   // initialize serial communication at 9600 bits per second:
   Serial.begin(9600);
-  lcd.setCursor(0,0);
+  lcd.setCursor(1,0);
   lcd.print("calibrating sensor");
   compensation = getCompensation();
   
   lcd.setCursor(0,1);
   lcd.print(String("compensation: ") + String(compensation));
   
-  
   lcd.createChar(0, smiley);
-  lcd.setCursor(0,2);
+  lcd.setCursor(10,2);
   lcd.write(byte(0));
   
   delay(2000);
@@ -100,22 +99,41 @@ void loop() {
   Serial.println(readSensorMbar());
   
   lcd.setCursor(0,0);
-  lcd.print(String("cur: ") + String(sens) + String("     "));
+  lcd.print(String("p cur: ") + String(sens) + String("     "));
   lcd.setCursor(16, 0);
   lcd.print("mbar");
   
   lcd.setCursor(0,1);
-  lcd.print(String("max: ") + String(sensmax)+ String("     "));
+  lcd.print(String("p max: ") + String(sensmax)+ String("     "));
   lcd.setCursor(16, 1);
   lcd.print("mbar");
   
+  /*
   lcd.setCursor(0,2);
   lcd.print(String("min: ") + String(sensmin)+ String("     "));
   lcd.setCursor(16, 2);
   lcd.print("mbar");
+  */
   
+  // calculate the force
+  // this constant is pi * (12.5 / 2)^2 * 1/10000
+  double x = 0.0122718463;
+  lcd.setCursor(0, 2);
+  lcd.print("F cur: ");
+  lcd.print(sens * x);
+  lcd.print("      ");
+  lcd.setCursor(19, 2);
+  lcd.print("N");
+
   lcd.setCursor(0, 3);
-  lcd.print(millis());
+  lcd.print("F max: ");
+  lcd.print(sensmax * x);
+  lcd.print("      ");
+  lcd.setCursor(19, 3);
+  lcd.print("N");
+
+
+
   delay(1);        // delay in between reads for stability
 }
 
