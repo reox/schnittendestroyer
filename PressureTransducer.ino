@@ -11,16 +11,6 @@ int compensation = 0;
 // this constant is pi * (12.5 / 2)^2 * 1/10000
 const double c_force = 0.0122718463;
 
-byte smiley[8] = {
-  B00000,
-  B10001,
-  B00000,
-  B00000,
-  B10001,
-  B01110,
-  B00000,
-};
-
 int readSensorMbar(){
   // Honeywell 40PC250G pressure sensor
   // resolution of analog pin ~4.9mV
@@ -67,20 +57,16 @@ int getCompensation(){
 
 
 void setup() {
-    lcd.begin(20, 4);
+    lcd.begin(16, 2);
   
   // initialize serial communication at 9600 bits per second:
   Serial.begin(9600);
   lcd.setCursor(1,0);
-  lcd.print("calibrating sensor");
+  lcd.print("calibrating...");
   compensation = getCompensation();
   
   lcd.setCursor(0,1);
-  lcd.print(String("compensation: ") + String(compensation));
-  
-  lcd.createChar(0, smiley);
-  lcd.setCursor(10,2);
-  lcd.write(byte(0));
+  lcd.print(String("comp.: ") + String(compensation));
   
   delay(2000);
   
@@ -100,37 +86,19 @@ void loop() {
   }
   
   Serial.println(readSensorMbar());
-  
-  lcd.setCursor(0,0);
-  lcd.print(String("p cur: ") + String(sens) + String("     "));
-  lcd.setCursor(16, 0);
-  lcd.print("mbar");
-  
-  lcd.setCursor(0,1);
-  lcd.print(String("p max: ") + String(sensmax)+ String("     "));
-  lcd.setCursor(16, 1);
-  lcd.print("mbar");
-  
-  /*
-  lcd.setCursor(0,2);
-  lcd.print(String("min: ") + String(sensmin)+ String("     "));
-  lcd.setCursor(16, 2);
-  lcd.print("mbar");
-  */
-  
   // calculate the force
-  lcd.setCursor(0, 2);
+  lcd.setCursor(0, 0);
   lcd.print("F cur: ");
   lcd.print(sens * c_force);
   lcd.print("      ");
-  lcd.setCursor(19, 2);
+  lcd.setCursor(15, 0);
   lcd.print("N");
 
-  lcd.setCursor(0, 3);
+  lcd.setCursor(0, 1);
   lcd.print("F max: ");
   lcd.print(sensmax * c_force);
   lcd.print("      ");
-  lcd.setCursor(19, 3);
+  lcd.setCursor(15, 1);
   lcd.print("N");
 
 
